@@ -1,0 +1,25 @@
+#!/usr/local/bin/ansible-playbook
+---
+- name: Upgrading ASA firewalls.
+  hosts: all
+  connection: network_cli
+  become: yes
+  become_method: enable
+  serial: 5
+  vars:
+    file_name: asa871-8-smp-k8.bin  # Name of the bin file
+  vars_files:
+    # Include vault file
+    - ./vault/secret.yml
+  tasks:
+    - name: Check boot variable. 
+      asa_command:
+        commands:
+          - show bootvar
+      register: bootvar
+    - debug: var=bootvar.stdout[0]
+
+    - name: Reloading the system
+      asa_command:
+        commands:
+          - reload noconfirm reason "Upgrading Firewall."
