@@ -12,6 +12,12 @@
     # Include vault file
     - ./vault/secret.yml
   tasks:
+    - name: Updating boot image.
+      asa_config:
+        lines:
+          - "boot system disk0:/{{ file_name }}"
+      save: yes   # save running config to startup config
+      
     - name: Check boot variable. 
       asa_command:
         commands:
